@@ -1,10 +1,14 @@
+/* eslint-disable @typescript-eslint/no-this-alias */
 import { Schema, model } from 'mongoose';
+import validator from 'validator';
 import {
   Guardian,
   LocalGuardian,
   Student,
   UserName,
 } from './students/student.interface';
+import bcrypt from 'bcrypt';
+import config from '../config';
 
 const userNameSchema = new Schema<UserName>({
   firstName: {
@@ -14,13 +18,13 @@ const userNameSchema = new Schema<UserName>({
     maxlength: [20, 'name can not be more than 20'],
 
     // custom validation
-    validate: {
-      validator: function (value: string) {
-        const firstNameStr = value.charAt(0).toUpperCase() + value.slice(1);
-        return firstNameStr === value;
-      },
-      message: '{VALUE} is not a capitalize format',
-    },
+    // validate: {
+    //   validator: function (value: string) {
+    //     const firstNameStr = value.charAt(0).toUpperCase() + value.slice(1);
+    //     return firstNameStr === value;
+    //   },
+    //   message: '{VALUE} is not a capitalize format',
+    // },
   },
   middleName: {
     type: String,
@@ -28,6 +32,13 @@ const userNameSchema = new Schema<UserName>({
   lastName: {
     type: String,
     required: [true, 'Last Name must be required'],
+
+    // Third party validation libraries
+
+    // validate: {
+    //   validator: (value: string) => validator.isAlpha(value),
+    //   message: '{VALUE} is not valid',
+    // },
   },
 });
 const guardianSchema = new Schema<Guardian>({
@@ -67,6 +78,12 @@ const localGuardianSchema = new Schema<LocalGuardian>({
 // create schema for student
 const studentSchema = new Schema<Student>({
   id: { type: String, required: true, unique: true },
+  password: {
+    type: String,
+    required: true,
+    unique: true,
+    maxlength: [20, 'password cant be more than 20 char'],
+  },
   name: {
     type: userNameSchema,
     required: true,
@@ -80,7 +97,15 @@ const studentSchema = new Schema<Student>({
     required: true,
   },
   dateOfBirth: { type: String },
-  email: { type: String, required: true, unique: true },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: {
+      validator: (value: string) => validator.isEmail(value),
+      message: '{Value} is not a valid email type',
+    },
+  },
   contactNo: { type: String, required: true },
   emergencyContactNo: { type: String, required: true },
   bloodGroup: {
@@ -103,6 +128,24 @@ const studentSchema = new Schema<Student>({
     enum: ['active', 'blocked'],
     default: 'active',
   },
+});
+
+// pre save middleware/hook
+studentSchema.pre('save', async function (next) {
+  // console.log(this, 'pre hook : we will save data');
+
+  // hashing pass save into db
+  const user = this;
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
+});
+
+// post save middleware/hook
+studentSchema.post('save', function () {
+  console.log(this, 'post hook : we saved our data');
 });
 
 // create model
