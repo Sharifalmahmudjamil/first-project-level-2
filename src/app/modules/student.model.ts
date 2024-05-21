@@ -81,7 +81,6 @@ const studentSchema = new Schema<Student>({
   password: {
     type: String,
     required: true,
-    unique: true,
     maxlength: [20, 'password cant be more than 20 char'],
   },
   name: {
@@ -128,14 +127,20 @@ const studentSchema = new Schema<Student>({
     enum: ['active', 'blocked'],
     default: 'active',
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+// --------Document middleware
 
 // pre save middleware/hook
 studentSchema.pre('save', async function (next) {
   // console.log(this, 'pre hook : we will save data');
 
   // hashing pass save into db
-  const user = this;
+  const user = this; //this refer by document
   user.password = await bcrypt.hash(
     user.password,
     Number(config.bcrypt_salt_rounds),
@@ -144,8 +149,25 @@ studentSchema.pre('save', async function (next) {
 });
 
 // post save middleware/hook
-studentSchema.post('save', function () {
-  console.log(this, 'post hook : we saved our data');
+studentSchema.post('save', function (doc, next) {
+  doc.password = '';
+  // console.log( 'post hook : we saved our data');
+
+  next();
+});
+
+// --------- query middleware
+
+studentSchema.pre('find', function (next) {
+  // console.log(this);
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+studentSchema.pre('findOne', function (next) {
+  // console.log(this);
+  this.find({ isDeleted: { $ne: true } });
+  next();
 });
 
 // create model

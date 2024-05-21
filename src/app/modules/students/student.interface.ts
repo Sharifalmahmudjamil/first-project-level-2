@@ -38,4 +38,5 @@ export type Student = {
   localGuardian: LocalGuardian;
   profileImage?: string;
   isActive: 'active' | 'blocked';
+  isDeleted: boolean;
 };
