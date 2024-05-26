@@ -1,13 +1,12 @@
-import { StudentModel } from '../student.model';
-import { Student } from './student.interface';
+import { StudentModel } from './student.model';
 
-const createStudentIntoDb = async (studentData: Student) => {
-  // const result = await StudentModel.create(student); //built in static method
+// const createStudentIntoDb = async (studentData: Student) => {
+//   // const result = await StudentModel.create(student); //built in static method
 
-  const student = new StudentModel(studentData);
-  const result = student.save(); //built in instance method
-  return result;
-};
+//   const student = new StudentModel(studentData);
+//   const result = student.save(); //built in instance method
+//   return result;
+// };
 
 const getAllStudentsFromDb = async () => {
   const result = await StudentModel.find();
@@ -25,7 +24,6 @@ const deleteStudentFromDb = async (id: string) => {
 };
 
 export const StudentService = {
-  createStudentIntoDb,
   getAllStudentsFromDb,
   getAllSingleStudentFromDb,
   deleteStudentFromDb,

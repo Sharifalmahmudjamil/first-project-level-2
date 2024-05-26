@@ -6,9 +6,9 @@ import {
   LocalGuardian,
   Student,
   UserName,
-} from './students/student.interface';
+} from './student.interface';
 import bcrypt from 'bcrypt';
-import config from '../config';
+import config from '../../config';
 
 const userNameSchema = new Schema<UserName>({
   firstName: {
@@ -78,6 +78,12 @@ const localGuardianSchema = new Schema<LocalGuardian>({
 // create schema for student
 const studentSchema = new Schema<Student>({
   id: { type: String, required: true, unique: true },
+  user: {
+    type: Schema.Types.ObjectId,
+    required: [true, 'User id is required'],
+    unique: true,
+    ref: 'User',
+  },
   password: {
     type: String,
     required: true,
@@ -122,11 +128,6 @@ const studentSchema = new Schema<Student>({
     required: true,
   },
   profileImage: { type: String },
-  isActive: {
-    type: String,
-    enum: ['active', 'blocked'],
-    default: 'active',
-  },
   isDeleted: {
     type: Boolean,
     default: false,
