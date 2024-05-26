@@ -12,6 +12,9 @@ import cors from 'cors';
 // import { StudentRoutes } from './app/modules/students/student.route';
 import { UserRoutes } from './app/modules/user/user.route';
 import globalErrorHandler from './app/middlewares/globalErrorhandler';
+import NotFound from './app/middlewares/notFound';
+import { StudentRoutes } from './app/modules/students/student.route';
+import router from './app/routes';
 
 const app: Application = express();
 
@@ -20,13 +23,15 @@ app.use(express.json());
 app.use(cors());
 
 // application Route
-// app.use('/api/v1/students', StudentRoutes);
-app.use('/api/v1/users', UserRoutes);
+app.use('/api/v1', router);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World!');
 });
 
 app.use(globalErrorHandler);
+
+// Not found
+app.use(NotFound);
 
 export default app;
