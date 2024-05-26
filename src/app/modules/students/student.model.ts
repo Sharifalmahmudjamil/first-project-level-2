@@ -7,8 +7,6 @@ import {
   Student,
   UserName,
 } from './student.interface';
-import bcrypt from 'bcrypt';
-import config from '../../config';
 
 const userNameSchema = new Schema<UserName>({
   firstName: {
@@ -16,15 +14,6 @@ const userNameSchema = new Schema<UserName>({
     required: [true, 'First Name must be required'],
     trim: true,
     maxlength: [20, 'name can not be more than 20'],
-
-    // custom validation
-    // validate: {
-    //   validator: function (value: string) {
-    //     const firstNameStr = value.charAt(0).toUpperCase() + value.slice(1);
-    //     return firstNameStr === value;
-    //   },
-    //   message: '{VALUE} is not a capitalize format',
-    // },
   },
   middleName: {
     type: String,
@@ -32,13 +21,6 @@ const userNameSchema = new Schema<UserName>({
   lastName: {
     type: String,
     required: [true, 'Last Name must be required'],
-
-    // Third party validation libraries
-
-    // validate: {
-    //   validator: (value: string) => validator.isAlpha(value),
-    //   message: '{VALUE} is not valid',
-    // },
   },
 });
 const guardianSchema = new Schema<Guardian>({
@@ -83,11 +65,6 @@ const studentSchema = new Schema<Student>({
     required: [true, 'User id is required'],
     unique: true,
     ref: 'User',
-  },
-  password: {
-    type: String,
-    required: true,
-    maxlength: [20, 'password cant be more than 20 char'],
   },
   name: {
     type: userNameSchema,
@@ -135,27 +112,6 @@ const studentSchema = new Schema<Student>({
 });
 
 // --------Document middleware
-
-// pre save middleware/hook
-studentSchema.pre('save', async function (next) {
-  // console.log(this, 'pre hook : we will save data');
-
-  // hashing pass save into db
-  const user = this; //this refer by document
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bcrypt_salt_rounds),
-  );
-  next();
-});
-
-// post save middleware/hook
-studentSchema.post('save', function (doc, next) {
-  doc.password = '';
-  // console.log( 'post hook : we saved our data');
-
-  next();
-});
 
 // --------- query middleware
 
