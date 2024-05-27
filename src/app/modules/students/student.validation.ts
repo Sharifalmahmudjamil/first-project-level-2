@@ -1,20 +1,17 @@
 import { z } from 'zod';
 
-// UserName Schema
 const userNameValidationSchema = z.object({
   firstName: z
     .string()
-    .max(20, { message: 'First Name can not be more than 20 characters' })
-    .regex(/^[A-Z][a-z]*$/, {
-      message: 'First Name must be in capitalize format',
+    .min(1)
+    .max(20)
+    .refine((value) => /^[A-Z]/.test(value), {
+      message: 'First Name must start with a capital letter',
     }),
-  middleName: z.string().optional(),
-  lastName: z.string().regex(/^[A-Za-z]+$/, {
-    message: 'Last Name must only contain alphabetic characters',
-  }),
+  middleName: z.string(),
+  lastName: z.string(),
 });
 
-// Guardian Schema
 const guardianValidationSchema = z.object({
   fatherName: z.string(),
   fatherOccupation: z.string(),
@@ -24,7 +21,6 @@ const guardianValidationSchema = z.object({
   motherContactNo: z.string(),
 });
 
-// LocalGuardian Schema
 const localGuardianValidationSchema = z.object({
   name: z.string(),
   occupation: z.string(),
@@ -32,26 +28,27 @@ const localGuardianValidationSchema = z.object({
   address: z.string(),
 });
 
-// Student Schema
-const studentValidationSchema = z.object({
-  id: z.string(),
-  password: z.string().max(20),
-  name: userNameValidationSchema,
-  gender: z.enum(['male', 'female'], { message: '{VALUE} is not valid' }),
-  dateOfBirth: z.string(),
-  email: z.string().email({ message: 'Email must be a valid email address' }),
-  contactNo: z.string(),
-  emergencyContactNo: z.string(),
-  bloodGroup: z
-    .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
-    .optional(),
-  presentAddress: z.string(),
-  permanentAddress: z.string(),
-  guardian: guardianValidationSchema,
-  localGuardian: localGuardianValidationSchema,
-  profileImage: z.string().optional(),
-  isActive: z.enum(['active', 'blocked']).default('active'),
-  isDeleted: z.boolean(),
+export const createStudentValidationSchema = z.object({
+  body: z.object({
+    password: z.string().max(20),
+    student: z.object({
+      name: userNameValidationSchema,
+      gender: z.enum(['male', 'female', 'other']),
+      dateOfBirth: z.string().optional(),
+      email: z.string().email(),
+      contactNo: z.string(),
+      emergencyContactNo: z.string(),
+      bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']),
+      presentAddress: z.string(),
+      permanentAddress: z.string(),
+      guardian: guardianValidationSchema,
+      localGuardian: localGuardianValidationSchema,
+      admissionSemester: z.string(),
+      profileImg: z.string(),
+    }),
+  }),
 });
 
-export default studentValidationSchema;
+export const studentValidations = {
+  createStudentValidationSchema,
+};

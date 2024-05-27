@@ -1,15 +1,12 @@
-import { RequestHandler } from 'express';
 import { UserServices } from './user.service';
 import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
+import catchAsync from '../../utils/catchAsync';
 
 // create data
-const createStudent: RequestHandler = async (req, res, next) => {
+const createStudent = catchAsync(async (req, res, next) => {
   try {
     const { password, student: StudentData } = req.body;
-
-    // data validation using zod
-    //   const zodParseData = studentValidationSchema.parse(StudentData);
 
     //   will call service func to send this data
     const result = await UserServices.createStudentIntoDb(
@@ -33,7 +30,7 @@ const createStudent: RequestHandler = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-};
+});
 export const UserControllers = {
   createStudent,
 };
