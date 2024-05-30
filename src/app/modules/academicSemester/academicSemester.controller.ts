@@ -1,17 +1,14 @@
-import { UserServices } from './user.service';
 import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
+import { AcademicSemesterService } from './academicSemester.service';
 
 // create data
-const createStudent = catchAsync(async (req, res, next) => {
+const createAcademicSemester = catchAsync(async (req, res, next) => {
   try {
-    const { password, student: StudentData } = req.body;
-
     //   will call service func to send this data
-    const result = await UserServices.createStudentIntoDb(
-      password,
-      StudentData,
+    const result = await AcademicSemesterService.AcademicSemesterIntoDb(
+      req.body,
     );
 
     // send response
@@ -19,13 +16,13 @@ const createStudent = catchAsync(async (req, res, next) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'student is create successfully',
+      message: 'Academic Semester is  create successfully',
       data: result,
     });
   } catch (err) {
     next(err);
   }
 });
-export const UserControllers = {
-  createStudent,
+export const AcademicSemesterControllers = {
+  createAcademicSemester,
 };
