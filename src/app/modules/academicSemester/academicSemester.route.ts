@@ -12,11 +12,22 @@ router.post(
   ),
   AcademicSemesterControllers.createAcademicSemester,
 );
+// single data get
+router.get(
+  '/:semesterId',
+  AcademicSemesterControllers.getSingleAcademicSemester,
+);
 
-// router.get('/', StudentController.getAllStudents);
+// update data
+router.patch(
+  '/:semesterId',
+  validateRequest(
+    AcademicSemesterValidation.updateAcademicSemesterValidationSchema,
+  ),
+  AcademicSemesterControllers.updateAcademicSemester,
+);
 
-// router.get('/:studentId', StudentController.getSingleStudentData);
-
-// router.delete('/:studentId', StudentController.deleteStudentData);
+// all data get
+router.get('/', AcademicSemesterControllers.getAllAcademicSemesters);
 
 export const AcademicSemesterRoute = router;
