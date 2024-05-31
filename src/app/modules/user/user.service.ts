@@ -28,7 +28,7 @@ const createStudentIntoDb = async (password: string, payload: Student) => {
   //set  generated id
   if (admissionSemester !== null) {
     // Now typescript knows admission semester is not null
-    userData.id = generatedStudentId(admissionSemester);
+    userData.id = await generatedStudentId(admissionSemester);
   }
 
   // create a user
