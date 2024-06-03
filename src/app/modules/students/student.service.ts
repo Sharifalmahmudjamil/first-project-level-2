@@ -9,12 +9,26 @@ import { StudentModel } from './student.model';
 // };
 
 const getAllStudentsFromDb = async () => {
-  const result = await StudentModel.find();
+  const result = await StudentModel.find()
+    .populate('admissionSemester')
+    .populate({
+      path: 'academicDepartment',
+      populate: {
+        path: 'academicFaculty',
+      },
+    });
   return result;
 };
 
 const getAllSingleStudentFromDb = async (id: string) => {
-  const result = await StudentModel.findOne({ id });
+  const result = await StudentModel.findById(id)
+    .populate('admissionSemester')
+    .populate({
+      path: 'academicDepartment',
+      populate: {
+        path: 'academicFaculty',
+      },
+    });
   return result;
 };
 

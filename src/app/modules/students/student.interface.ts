@@ -42,4 +42,5 @@ export type Student = {
   profileImage?: string;
   admissionSemester: Types.ObjectId;
   isDeleted: boolean;
+  academicDepartment: Types.ObjectId;
 };
