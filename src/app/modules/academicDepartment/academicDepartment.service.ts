@@ -1,16 +1,16 @@
-import AppError from '../../erros/AppError';
+// import AppError from '../../erros/AppError';
 import { TAcademicDepartment } from './academicDepartment.interface';
 import { AcademicDepartmentModel } from './academicDepartment.model';
 
 // create into db
 const createDepartmentIntoDb = async (payload: TAcademicDepartment) => {
-  const isDepartmentExists = await AcademicDepartmentModel.findOne({
-    name: payload.name,
-  });
+  // const isDepartmentExists = await AcademicDepartmentModel.findOne({
+  //   name: payload.name,
+  // });
 
-  if (isDepartmentExists) {
-    throw new AppError(404, 'This Department already exists');
-  }
+  // if (isDepartmentExists) {
+  //   throw new AppError(404, 'This Department already exists');
+  // }
 
   const result = await AcademicDepartmentModel.create(payload);
   return result;
